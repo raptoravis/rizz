@@ -53,20 +53,10 @@ function(rizz__add_example_17 proj_name)
     string(SUBSTRING ${proj_name} 3 -1 source_file)
 	#file(GLOB SRC_FILES examples/${proj_name}/${source_file}.c)
 	file(GLOB SRC_FILES examples/${proj_name}/${source_file}.*)
-    if (BUNDLE AND NOT ANDROID) 
-        add_executable(${proj_name} ${EXEC_TYPE} ${SRC_FILES})
-    else()
-        add_library(${proj_name} SHARED ${SRC_FILES})
-    endif()
-
-    if (NOT ANDROID AND NOT IOS)
-        target_compile_definitions(${proj_name} PRIVATE COMPILE_DEFINITIONS -DEXAMPLES_ROOT="${CMAKE_CURRENT_SOURCE_DIR}/examples")
-    endif()
+    add_executable(${proj_name} ${SRC_FILES})
     
 	set_target_properties(${proj_name} PROPERTIES CXX_STANDARD 17)
 
-    target_link_libraries(${proj_name} PRIVATE sx)
-    add_dependencies(${proj_name} rizz)
 endfunction()
 
 

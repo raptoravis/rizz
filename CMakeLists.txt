@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.1)
+#project(rizz CXX)
 project(rizz)
+
+#list(APPEND CMAKE_CXX_SOURCE_FILE_EXTENSIONS c)
 
 if (ANDROID OR IOS)
     set(BUNDLE ON CACHE INTERNAL "Bundle mode" FORCE)
@@ -161,7 +164,8 @@ set(example_projects 01-hello
                      02-quad 
                      03-drawsprite 
                      04-animsprite
-                     05-playsound)
+                     05-playsound
+					 12-ecscpp)
 
 set(example_projects_17 11-ecs)
 

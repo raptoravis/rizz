@@ -48,6 +48,28 @@ function(rizz__add_example proj_name)
     add_dependencies(${proj_name} rizz)
 endfunction()
 
+function(rizz__add_example_17 proj_name)
+	#set(CMAKE_CXX_STANDARD 17)
+    string(SUBSTRING ${proj_name} 3 -1 source_file)
+	#file(GLOB SRC_FILES examples/${proj_name}/${source_file}.c)
+	file(GLOB SRC_FILES examples/${proj_name}/${source_file}.*)
+    if (BUNDLE AND NOT ANDROID) 
+        add_executable(${proj_name} ${EXEC_TYPE} ${SRC_FILES})
+    else()
+        add_library(${proj_name} SHARED ${SRC_FILES})
+    endif()
+
+    if (NOT ANDROID AND NOT IOS)
+        target_compile_definitions(${proj_name} PRIVATE COMPILE_DEFINITIONS -DEXAMPLES_ROOT="${CMAKE_CURRENT_SOURCE_DIR}/examples")
+    endif()
+    
+	set_target_properties(${proj_name} PROPERTIES CXX_STANDARD 17)
+
+    target_link_libraries(${proj_name} PRIVATE sx)
+    add_dependencies(${proj_name} rizz)
+endfunction()
+
+
 if (NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 endif()
@@ -150,6 +172,8 @@ set(example_projects 01-hello
                      04-animsprite
                      05-playsound)
 
+set(example_projects_17 11-ecs)
+
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 foreach (3rdparty_project ${3rdparty_projects}) 
@@ -180,6 +204,12 @@ if (BUILD_EXAMPLES AND NOT BUNDLE)
     foreach (example_project ${example_projects})
         rizz__add_example(${example_project})
         set_target_properties(${example_project} PROPERTIES FOLDER examples)
+    endforeach()
+
+    foreach (example_project ${example_projects_17})
+        rizz__add_example_17(${example_project})
+        set_target_properties(${example_project} PROPERTIES FOLDER examples_17)
+		target_include_directories(${example_project} PRIVATE "3rdparty")
     endforeach()
 endif()
 

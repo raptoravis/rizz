@@ -204,7 +204,7 @@ if (BUILD_EXAMPLES AND NOT BUNDLE)
     foreach (example_project ${example_projects_17})
         rizz__add_example_17(${example_project})
         set_target_properties(${example_project} PROPERTIES FOLDER examples_17)
-		target_include_directories(${example_project} PRIVATE "3rdparty")
+		target_include_directories(${example_project} PRIVATE "3rdparty/entt/include")
     endforeach()
 endif()
 

@@ -1,5 +1,5 @@
 #include <cstdint>
-#include <entt/src/entt/entt.hpp>
+#include <entt/entt.hpp>
 
 struct position {
     float x;

@@ -35,6 +35,7 @@ RIZZ_STATE rizz_gfx_stage g_stage;
     }
 #endif
 */
+int ecsstuff();
 
 static bool init()
 {
@@ -42,6 +43,8 @@ static bool init()
     // at least one stage should be registered if you want to draw anything
     g_stage = the_gfx->stage_register("main", (rizz_gfx_stage){ .id = 0 });
     sx_assert(g_stage.id);
+
+    ecsstuff();
 
     return true;
 }

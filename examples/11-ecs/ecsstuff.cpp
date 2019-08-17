@@ -39,7 +39,9 @@ void update(std::uint64_t dt, entt::registry& registry)
     });
 }
 
-int main()
+extern "C" int ecsstuff();
+
+int ecsstuff()
 {
     entt::registry registry;
     std::uint64_t dt = 16;
@@ -56,4 +58,5 @@ int main()
     update(registry);
 
     // ...
+    return 0;
 }

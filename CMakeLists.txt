@@ -56,9 +56,21 @@ endfunction()
 function(rizz__add_example_17 proj_name)
 	#set(CMAKE_CXX_STANDARD 17)
     string(SUBSTRING ${proj_name} 3 -1 source_file)
-	file(GLOB SRC_FILES examples/${proj_name}/${source_file}.*)
-    add_executable(${proj_name} ${SRC_FILES})
+	file(GLOB SRC_FILES examples/${proj_name}/*.c*)
+
+    if (BUNDLE AND NOT ANDROID) 
+        add_executable(${proj_name} ${EXEC_TYPE} ${SRC_FILES})
+    else()
+        add_library(${proj_name} SHARED ${SRC_FILES})
+    endif()
+
+    if (NOT ANDROID AND NOT IOS)
+        target_compile_definitions(${proj_name} PRIVATE COMPILE_DEFINITIONS -DEXAMPLES_ROOT="${CMAKE_CURRENT_SOURCE_DIR}/examples")
+    endif()
     
+    target_link_libraries(${proj_name} PRIVATE sx)
+    add_dependencies(${proj_name} rizz)
+
 	set_target_properties(${proj_name} PROPERTIES CXX_STANDARD 17)
 
 endfunction()
@@ -165,7 +177,7 @@ set(example_projects 01-hello
                      03-drawsprite 
                      04-animsprite
                      05-playsound
-					 12-ecscpp)
+					 )
 
 set(example_projects_17 11-ecs)
 

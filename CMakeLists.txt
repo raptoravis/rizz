@@ -53,28 +53,6 @@ function(rizz__add_example proj_name)
     add_dependencies(${proj_name} rizz)
 endfunction()
 
-function(rizz__add_example_others proj_name)
-	#set(CMAKE_CXX_STANDARD 17)
-    string(SUBSTRING ${proj_name} 3 -1 source_file)
-	file(GLOB SRC_FILES other_examples/${proj_name}/*.c*)
-
-    if (BUNDLE AND NOT ANDROID) 
-        add_executable(${proj_name} ${EXEC_TYPE} ${SRC_FILES})
-    else()
-        add_library(${proj_name} SHARED ${SRC_FILES})
-    endif()
-
-    if (NOT ANDROID AND NOT IOS)
-        target_compile_definitions(${proj_name} PRIVATE COMPILE_DEFINITIONS -DEXAMPLES_ROOT="${CMAKE_CURRENT_SOURCE_DIR}/examples")
-    endif()
-    
-    target_link_libraries(${proj_name} PRIVATE sx)
-    add_dependencies(${proj_name} rizz)
-
-	set_target_properties(${proj_name} PROPERTIES CXX_STANDARD 17)
-
-endfunction()
-
 
 if (NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
@@ -179,8 +157,6 @@ set(example_projects 01-hello
                      05-playsound
 					 )
 
-set(others_example_projects 11-ecs)
-
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 foreach (3rdparty_project ${3rdparty_projects}) 
@@ -212,12 +188,6 @@ if (BUILD_EXAMPLES AND NOT BUNDLE)
         rizz__add_example(${example_project})
         set_target_properties(${example_project} PROPERTIES FOLDER examples)
     endforeach()
-
-    foreach (other_example_project ${others_example_projects})
-        rizz__add_example_others(${other_example_project})
-        set_target_properties(${other_example_project} PROPERTIES FOLDER other_examples)
-		target_include_directories(${other_example_project} PRIVATE "others/entt/src")
-    endforeach()
 endif()
 
 # use -DBUNDLE_TARGET=target-name and -DBUNDLE_TARGET_NAME=name to define 
@@ -244,3 +214,5 @@ if (BUNDLE)
         rizz_set_executable(${BUNDLE_TARGET} NAME ${BUNDLE_TARGET_NAME})
     endif()
 endif()
+
+add_subdirectory("other_examples")

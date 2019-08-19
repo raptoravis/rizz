@@ -66,7 +66,7 @@ static void render()
     // Use imgui UI
     if (the_imgui) {
         the_imgui->SetNextWindowContentSize(sx_vec2f(100.0f, 50.0f));
-        if (the_imgui->Begin("Hello", NULL, 0)) {
+        if (the_imgui->Begin("ECS", NULL, 0)) {
             the_imgui->LabelText("Fps", "%.3f", the_core->fps());
         }
         the_imgui->End();

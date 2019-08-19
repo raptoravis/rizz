@@ -53,10 +53,10 @@ function(rizz__add_example proj_name)
     add_dependencies(${proj_name} rizz)
 endfunction()
 
-function(rizz__add_example_17 proj_name)
+function(rizz__add_example_others proj_name)
 	#set(CMAKE_CXX_STANDARD 17)
     string(SUBSTRING ${proj_name} 3 -1 source_file)
-	file(GLOB SRC_FILES examples/${proj_name}/*.c*)
+	file(GLOB SRC_FILES other_examples/${proj_name}/*.c*)
 
     if (BUNDLE AND NOT ANDROID) 
         add_executable(${proj_name} ${EXEC_TYPE} ${SRC_FILES})
@@ -179,7 +179,7 @@ set(example_projects 01-hello
                      05-playsound
 					 )
 
-set(example_projects_17 11-ecs)
+set(others_example_projects 11-ecs)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
@@ -213,10 +213,10 @@ if (BUILD_EXAMPLES AND NOT BUNDLE)
         set_target_properties(${example_project} PROPERTIES FOLDER examples)
     endforeach()
 
-    foreach (example_project ${example_projects_17})
-        rizz__add_example_17(${example_project})
-        set_target_properties(${example_project} PROPERTIES FOLDER examples_17)
-		target_include_directories(${example_project} PRIVATE "others/entt/src")
+    foreach (other_example_project ${others_example_projects})
+        rizz__add_example_others(${other_example_project})
+        set_target_properties(${other_example_project} PROPERTIES FOLDER other_examples)
+		target_include_directories(${other_example_project} PRIVATE "others/entt/src")
     endforeach()
 endif()
 

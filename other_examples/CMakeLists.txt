@@ -7,7 +7,7 @@ endif()
   
 # Default to C++14
 if(NOT CMAKE_CXX_STANDARD)
-	set(CMAKE_CXX_STANDARD 14)
+	set(CMAKE_CXX_STANDARD 17)
 endif()
 
 function(rizz__add_example_others proj_name)
@@ -22,13 +22,17 @@ function(rizz__add_example_others proj_name)
     endif()
 
     if (NOT ANDROID AND NOT IOS)
-        target_compile_definitions(${proj_name} PRIVATE COMPILE_DEFINITIONS -DEXAMPLES_ROOT="${CMAKE_CURRENT_SOURCE_DIR}/examples")
+        target_compile_definitions(${proj_name} PRIVATE COMPILE_DEFINITIONS -DEXAMPLES_ROOT="${CMAKE_CURRENT_SOURCE_DIR}/other_examples")
     endif()
     
     target_link_libraries(${proj_name} PRIVATE sx)
     add_dependencies(${proj_name} rizz)
 
-	set_target_properties(${proj_name} PROPERTIES CXX_STANDARD 17)
+	#set_target_properties(${proj_name} PROPERTIES CXX_STANDARD 17)
+	#set_target_properties(${proj_name} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../bin/Debug")
+	set_target_properties(${proj_name} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "$(OutDir)")
+	set_target_properties(${proj_name} PROPERTIES VS_DEBUGGER_COMMAND "rizz.exe")
+	set_target_properties(${proj_name} PROPERTIES VS_DEBUGGER_COMMAND_ARGUMENTS "--run ${proj_name}.dll")
 
 endfunction()
 

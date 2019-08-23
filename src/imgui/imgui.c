@@ -572,6 +572,10 @@ typedef struct imgui__context {
     sg_image font_tex;
     bool mouse_btn_down[RIZZ_APP_MAX_MOUSEBUTTONS];
     bool mouse_btn_up[RIZZ_APP_MAX_MOUSEBUTTONS];
+    float mouse_wheel_h;
+    float mouse_wheel;
+    bool keys_down[512];
+    ImWchar* char_input;    // sx_array
     ImGuiMouseCursor last_cursor;
     sg_imgui_t sg_imgui;
 } imgui__context;
@@ -734,6 +738,7 @@ static void imgui__release()
         sx_free(alloc, g_imgui.verts);
     if (g_imgui.indices)
         sx_free(alloc, g_imgui.indices);
+    sx_array_free(the_core->alloc(RIZZ_MEMID_TOOLSET), g_imgui.char_input);
 }
 
 static void imgui__update_cursor()
@@ -799,6 +804,19 @@ static void imgui__frame()
             io->MouseDown[i] = false;
         }
     }
+
+    io->MouseWheel = g_imgui.mouse_wheel;
+    io->MouseWheelH = g_imgui.mouse_wheel_h;
+    g_imgui.mouse_wheel_h = g_imgui.mouse_wheel = 0;
+
+    sx_memcpy(io->KeysDown, g_imgui.keys_down, sizeof(io->KeysDown));
+    sx_memset(g_imgui.keys_down, 0x0, sizeof(g_imgui.keys_down));
+
+    for (int i = 0; i < sx_array_count(g_imgui.char_input); i++) {
+        the__imgui.ImGuiIO_AddInputCharacter(io, g_imgui.char_input[i]);
+    }
+    sx_array_clear(g_imgui.char_input);
+
     if (io->WantTextInput && !the_app->keyboard_shown()) {
         the_app->show_keyboard(true);
     }
@@ -927,6 +945,44 @@ static ImDrawList* imgui__begin_fullscreen_draw(const char* name)
     the__imgui.PopStyleColor(2);
 
     return dlist;
+}
+
+static void imgui__draw_cursor(ImDrawList* drawlist, ImGuiMouseCursor cursor, sx_vec2 pos,
+                               float scale)
+{
+    if (cursor == ImGuiMouseCursor_None)
+        return;
+    sx_assert(cursor > ImGuiMouseCursor_None && cursor < ImGuiMouseCursor_COUNT);
+
+    const ImU32 col_shadow = sx_color4u(0, 0, 0, 48).n;
+    const ImU32 col_border = sx_color4u(0, 0, 0, 255).n;        // Black
+    const ImU32 col_fill = sx_color4u(255, 255, 255, 255).n;    // White
+
+    ImGuiIO* conf = the__imgui.GetIO();
+    sx_vec2 offset, size, uv[4];
+    if (the__imgui.ImFontAtlas_GetMouseCursorTexData(conf->Fonts, cursor, &offset, &size, &uv[0],
+                                                     &uv[2])) {
+        pos = sx_vec2_sub(pos, offset);
+        const ImTextureID tex_id = conf->Fonts->TexID;
+        the__imgui.ImDrawList_PushTextureID(drawlist, tex_id);
+        the__imgui.ImDrawList_AddImage(
+            drawlist, tex_id, sx_vec2_add(pos, sx_vec2_mulf(sx_vec2f(1, 0), scale)),
+            sx_vec2_add(sx_vec2_add(pos, sx_vec2_mulf(sx_vec2f(1, 0), scale)),
+                        sx_vec2_mulf(size, scale)),
+            uv[2], uv[3], col_shadow);
+        the__imgui.ImDrawList_AddImage(
+            drawlist, tex_id, sx_vec2_add(pos, sx_vec2_mulf(sx_vec2f(2, 0), scale)),
+            sx_vec2_add(sx_vec2_add(pos, sx_vec2_mulf(sx_vec2f(2, 0), scale)),
+                        sx_vec2_mulf(size, scale)),
+            uv[2], uv[3], col_shadow);
+        the__imgui.ImDrawList_AddImage(drawlist, tex_id, pos,
+                                       sx_vec2_add(pos, sx_vec2_mulf(size, scale)), uv[2], uv[3],
+                                       col_border);
+        the__imgui.ImDrawList_AddImage(drawlist, tex_id, pos,
+                                       sx_vec2_add(pos, sx_vec2_mulf(size, scale)), uv[0], uv[1],
+                                       col_fill);
+        the__imgui.ImDrawList_PopTextureID(drawlist);
+    }
 }
 
 static sx_vec2 imgui__project_to_screen(const sx_vec3 pt, const sx_mat4* mvp, const sx_rect* vp)
@@ -1228,6 +1284,10 @@ static void imgui__graphics_debugger(const rizz_gfx_trace_info* info, bool* p_op
                 sg_imgui_draw_buffers_content(&g_imgui.sg_imgui);
                 the__imgui.EndTabItem();
             }
+            if (the__imgui.BeginTabItem("Caps", NULL, 0)) {
+                sg_imgui_draw_capabilities_content(&g_imgui.sg_imgui);
+                the__imgui.EndTabItem();
+            }
 
             the__imgui.EndTabBar();
         }
@@ -1394,6 +1454,7 @@ static rizz_api_imgui_extra the__imgui_debug_tools = {
     .memory_debugger = imgui__memory_debugger,
     .graphics_debugger = imgui__graphics_debugger,
     .begin_fullscreen_draw = imgui__begin_fullscreen_draw,
+    .draw_cursor = imgui__draw_cursor,
     .project_to_screen = imgui__project_to_screen,
     .gizmo_hover = ImGuizmo_IsOver,
     .gizmo_using = ImGuizmo_IsUsing,
@@ -1432,20 +1493,25 @@ rizz_plugin_decl_event_handler(imgui, e)
         }
         break;
     case RIZZ_APP_EVENTTYPE_MOUSE_SCROLL:
-        io->MouseWheelH = e->scroll_x;
-        io->MouseWheel += e->scroll_y;
+        g_imgui.mouse_wheel_h = e->scroll_x;
+        g_imgui.mouse_wheel += e->scroll_y;
         break;
     case RIZZ_APP_EVENTTYPE_KEY_DOWN:
-        io->KeysDown[e->key_code] = true;
+        g_imgui.keys_down[e->key_code] = true;
         break;
     case RIZZ_APP_EVENTTYPE_KEY_UP:
-        io->KeysDown[e->key_code] = false;
+        g_imgui.keys_down[e->key_code] = false;
         break;
     case RIZZ_APP_EVENTTYPE_CHAR:
-        the__imgui.ImGuiIO_AddInputCharacter(io, (ImWchar)e->char_code);
+        sx_array_push(the_core->alloc(RIZZ_MEMID_TOOLSET), g_imgui.char_input,
+                      (ImWchar)e->char_code);
         break;
     case RIZZ_APP_EVENTTYPE_UPDATE_CURSOR:
         imgui__update_cursor();
+        break;
+    case RIZZ_APP_EVENTTYPE_RESIZED:
+        io->DisplaySize = the_app->sizef();
+        ImGuizmo_SetRect(0, 0, io->DisplaySize.x, io->DisplaySize.y);
         break;
     default:
         break;

@@ -23,6 +23,14 @@ else ()
     option(ENABLE_PROFILER "Enable profiler" ON)
 endif()
 
+# output directories for binary files
+if (NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
+endif()
+if (NOT CMAKE_LIBRARY_OUTPUT_DIRECTORY)
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
+endif()
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(glslcc)
 include(bundle)
@@ -46,20 +54,15 @@ function(rizz__add_example proj_name)
     endif()
 
     if (NOT ANDROID AND NOT IOS)
-        target_compile_definitions(${proj_name} PRIVATE COMPILE_DEFINITIONS -DEXAMPLES_ROOT="${CMAKE_CURRENT_SOURCE_DIR}/examples")
+        if (NOT EXAMPLES_ROOT)
+            set(EXAMPLES_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/examples")
+        endif()
+        target_compile_definitions(${proj_name} PRIVATE COMPILE_DEFINITIONS -DEXAMPLES_ROOT="${EXAMPLES_ROOT}")
     endif()
     
     target_link_libraries(${proj_name} PRIVATE sx)
     add_dependencies(${proj_name} rizz)
 endfunction()
-
-
-if (NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
-endif()
-if (NOT CMAKE_LIBRARY_OUTPUT_DIRECTORY)
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
-endif()
 
 add_definitions(-D__STDC_LIMIT_MACROS)
 add_definitions(-D__STDC_FORMAT_MACROS)
@@ -145,8 +148,14 @@ if (NOT ENABLE_HOT_LOADING)
     list(REMOVE_ITEM 3rdparty_projects efsw)
 endif()
 
-if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+if (${CMAKE_SYSTEM_NAME} MATCHES "Linux" AND NOT RPI)
     list(APPEND 3rdparty_projects flextGL)
+endif()
+
+# TEMP: gainput rpi support is not included yet
+if (RPI)
+    list(REMOVE_ITEM 3rdparty_projects gainput)
+    list(REMOVE_ITEM native_projects input)
 endif()
 
 # examples

@@ -1,6 +1,8 @@
 #include <cstdint>
 #include <entt/entt.hpp>
 
+#include "./buffering.h"
+
 struct position {
     float x;
     float y;
@@ -41,6 +43,37 @@ void update(std::uint64_t dt, entt::registry& registry)
 
 extern "C" int ecsstuff();
 
+struct my_type
+{
+    int m1;
+    float m2;
+};
+
+struct position_1 : position {
+};
+
+struct position_2 : position {
+};
+
+
+void bufferingTest(entt::registry& registry)
+{
+    buffering<position_1, position_2> executor;
+
+    const auto entity = registry.create();
+    registry.assign<position_1>(entity, 1.0f, 2.0f);
+    registry.assign<position_2>(entity, 2.0f, 3.0f);
+    registry.assign<my_type>(entity, 1, 1.0f);
+
+    executor.run<my_type>(registry, [](position& pos, my_type& instance) { 
+		//
+	});
+    executor.swap();
+    executor.run<my_type>(registry, [](position& pos, my_type& instance) { 
+		//	
+	});
+}
+
 int ecsstuff()
 {
     entt::registry registry;
@@ -56,6 +89,8 @@ int ecsstuff()
 
     update(dt, registry);
     update(registry);
+
+	bufferingTest(registry);
 
     // ...
     return 0;

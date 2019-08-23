@@ -125,9 +125,9 @@ rizz_plugin_decl_event_handler(hello, e)
 
 rizz_game_decl_config(conf)
 {
-    conf->app_name = "hello";
+    conf->app_name = "11-ecs";
     conf->app_version = 1000;
-    conf->app_title = "01 - Hello";
+    conf->app_title = "11 - ecs";
     conf->window_width = 800;
     conf->window_height = 600;
     conf->core_flags |= RIZZ_CORE_FLAG_VERBOSE;

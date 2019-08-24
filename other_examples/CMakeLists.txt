@@ -10,6 +10,7 @@ if(NOT CMAKE_CXX_STANDARD)
 	set(CMAKE_CXX_STANDARD 17)
 endif()
 
+
 function(rizz__add_example_others proj_name)
 	#set(CMAKE_CXX_STANDARD 17)
     string(SUBSTRING ${proj_name} 3 -1 source_file)
@@ -38,8 +39,10 @@ endfunction()
 
 set(others_example_projects 11-ecs 12-tf)
 
-foreach (other_example_project ${others_example_projects})
-    rizz__add_example_others(${other_example_project})
-    set_target_properties(${other_example_project} PROPERTIES FOLDER other_examples)
-	target_include_directories(${other_example_project} PRIVATE "../others/entt/src" "../others/taskflow/include")
-endforeach()
+if (BUILD_EXAMPLES AND NOT BUNDLE)
+	foreach (other_example_project ${others_example_projects})
+		rizz__add_example_others(${other_example_project})
+		set_target_properties(${other_example_project} PROPERTIES FOLDER other_examples)
+		target_include_directories(${other_example_project} PRIVATE "../others/entt/src" "../others/taskflow/include")
+	endforeach()
+endif()

@@ -1,3 +1,5 @@
+#include <string>
+#include <iostream>
 #include <cstdint>
 #include <entt/entt.hpp>
 
@@ -67,10 +69,12 @@ void bufferingTest(entt::registry& registry)
 
     executor.run<my_type>(registry, [](position& pos, my_type& instance) { 
 		//
+        std::cout << "buffer 0:" << pos.x << pos.y << std::endl;
 	});
     executor.swap();
     executor.run<my_type>(registry, [](position& pos, my_type& instance) { 
 		//	
+        std::cout << "buffer 1:" << pos.x << pos.y << std::endl;
 	});
 }
 

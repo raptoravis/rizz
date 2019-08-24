@@ -37,6 +37,21 @@ RIZZ_STATE rizz_gfx_stage g_stage;
 */
 int ecsstuff();
 
+static void job_test_cb(int start, int end, int thrd_index, void* user) {
+	//
+}
+
+
+void jobsTest()
+{
+    void* ajob = 0;
+
+    sx_job_t job = the_core->job_dispatch(200, job_test_cb, ajob, SX_JOB_PRIORITY_HIGH, 0);
+
+    the_core->job_wait_and_del(job);
+}
+
+
 static bool init()
 {
     // register main graphics stage.
@@ -45,6 +60,8 @@ static bool init()
     sx_assert(g_stage.id);
 
     ecsstuff();
+
+	jobsTest();
 
     return true;
 }
@@ -134,4 +151,9 @@ rizz_game_decl_config(conf)
     conf->multisample_count = 4;
     conf->swap_interval = 2;
     conf->plugins[0] = "imgui";
+
+	conf->job_num_threads = 4;
+    conf->job_max_fibers = 100;
+    conf->tmp_mem_max = 0x500000; // 5MB
 }
+

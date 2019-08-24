@@ -152,6 +152,10 @@ static void update(float dt) {}
 
 static void render()
 {
+    rizz_profile_begin(the_core, render, 0);
+
+	rizz_profile_begin(the_core, quad, 0);
+
     sg_pass_action pass_action = { .colors[0] = { SG_ACTION_CLEAR, { 0.25f, 0.5f, 0.75f, 1.0f } },
                                    .depth = { SG_ACTION_CLEAR, 1.0f } };
 
@@ -174,13 +178,18 @@ static void render()
 
     the_gfx->staged.end_pass();
     the_gfx->staged.end();
+    rizz_profile_end(the_core);
 
+	rizz_profile_begin(the_core, imgui, 0);
     // Use imgui UI
     the_imgui->SetNextWindowContentSize(sx_vec2f(100.0f, 50.0f));
     if (the_imgui->Begin("quad", NULL, 0)) {
         the_imgui->LabelText("Fps", "%.3f", the_core->fps());
     }
     the_imgui->End();
+    rizz_profile_end(the_core);
+
+	rizz_profile_end(the_core);
 }
 
 rizz_plugin_decl_main(quad, plugin, e)

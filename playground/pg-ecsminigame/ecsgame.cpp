@@ -82,6 +82,7 @@ struct AvoidanceSystem {
 
     // objects that avoid: their IDs
     std::vector<entt::entity> objectList;
+    float deltaTime;
 
     void AddAvoidThisObjectToSystem(entt::entity id, float distance)
     {
@@ -113,32 +114,48 @@ struct AvoidanceSystem {
         pos.y += move.vely * deltaTime * 1.1f;
     }
 
-    void UpdateSystem(entt::registry& registry, double time, float deltaTime)
+	static void job_test_cb(int start, int end, int thrd_index, void* user)
+    {
+        AvoidanceSystem* _this = (AvoidanceSystem*)user;
+
+		for (size_t io = start; io < end; ++io) {
+			entt::entity go = _this->objectList[io];
+			const PositionComponent& myposition = registry.get<PositionComponent>(go);
+
+			// check each thing in avoid list
+			for (size_t ia = 0, na = _this->avoidList.size(); ia != na; ++ia) {
+				float avDistance = _this->avoidDistanceList[ia];
+				entt::entity avoid = _this->avoidList[ia];
+				const PositionComponent& avoidposition = registry.get<PositionComponent>(avoid);
+
+				// is our position closer to "thing to avoid" position than the avoid distance?
+				if (DistanceSq(myposition, avoidposition) < avDistance) {
+                    _this->ResolveCollision(go, _this->deltaTime);
+
+					// also make our sprite take the color of the thing we just bumped into
+					SpriteComponent& avoidSprite = registry.get<SpriteComponent>(avoid);
+					SpriteComponent& mySprite = registry.get<SpriteComponent>(go);
+					mySprite.colorR = avoidSprite.colorR;
+					mySprite.colorG = avoidSprite.colorG;
+					mySprite.colorB = avoidSprite.colorB;
+				}
+			}
+		}
+    }
+
+
+    void UpdateSystem(rizz_api_core* _core, entt::registry& registry, double time, float deltaTime)
     {
         // go through all the objects
-        for (size_t io = 0, no = objectList.size(); io != no; ++io) {
-            entt::entity go = objectList[io];
-            const PositionComponent& myposition = registry.get<PositionComponent>(go);
+		void* ajob = 0;
 
-            // check each thing in avoid list
-            for (size_t ia = 0, na = avoidList.size(); ia != na; ++ia) {
-                float avDistance = avoidDistanceList[ia];
-                entt::entity avoid = avoidList[ia];
-                const PositionComponent& avoidposition = registry.get<PositionComponent>(avoid);
+		this->deltaTime = deltaTime;
 
-                // is our position closer to "thing to avoid" position than the avoid distance?
-                if (DistanceSq(myposition, avoidposition) < avDistance) {
-                    ResolveCollision(go, deltaTime);
+        int jobsCount = (int)objectList.size();
 
-                    // also make our sprite take the color of the thing we just bumped into
-                    SpriteComponent& avoidSprite = registry.get<SpriteComponent>(avoid);
-                    SpriteComponent& mySprite = registry.get<SpriteComponent>(go);
-                    mySprite.colorR = avoidSprite.colorR;
-                    mySprite.colorG = avoidSprite.colorG;
-                    mySprite.colorB = avoidSprite.colorB;
-                }
-            }
-        }
+        sx_job_t job = _core->job_dispatch(jobsCount, job_test_cb, this, SX_JOB_PRIORITY_HIGH, 0);
+
+        _core->job_wait_and_del(job);
     }
 };
 
@@ -257,9 +274,9 @@ void updateMovement(entt::registry& registry, double time, float deltaTime)
     }
 }
 
-void updateAvoidance(entt::registry& registry, double time, float deltaTime)
+void updateAvoidance(rizz_api_core* _core, entt::registry& registry, double time, float deltaTime)
 {
-    s_AvoidanceSystem.UpdateSystem(registry, time, deltaTime);
+    s_AvoidanceSystem.UpdateSystem(_core, registry, time, deltaTime);
 }
 
 int updateRender(entt::registry& registry, sprite_data_t* data)
@@ -305,7 +322,7 @@ extern "C" int game_update(rizz_api_core* _core, sprite_data_t* data, double tim
 		rizz_profile_end(_core);
 
 		rizz_profile_begin(_core, updateAvoidance, 0);
-		updateAvoidance(registry, time, deltaTime);
+        updateAvoidance(_core, registry, time, deltaTime);
 		rizz_profile_end(_core);
 
 		rizz_profile_begin(_core, updateRender, 0);

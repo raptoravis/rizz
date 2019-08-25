@@ -69,17 +69,17 @@ static void render()
     the_gfx->staged.end_pass();
     the_gfx->staged.end();
 
-    // Use imgui UI
-    if (the_imgui) {
-        the_imgui->SetNextWindowContentSize(sx_vec2f(100.0f, 50.0f));
-        if (the_imgui->Begin("ECS", NULL, 0)) {
-            the_imgui->LabelText("Fps", "%.3f", the_core->fps());
-        }
-        the_imgui->End();
-    }
+    //// Use imgui UI
+    //if (the_imgui) {
+    //    the_imgui->SetNextWindowContentSize(sx_vec2f(100.0f, 50.0f));
+    //    if (the_imgui->Begin("tf", NULL, 0)) {
+    //        the_imgui->LabelText("Fps", "%.3f", the_core->fps());
+    //    }
+    //    the_imgui->End();
+    //}
 }
 
-rizz_plugin_decl_main(hello, plugin, e)
+rizz_plugin_decl_main(pg-tf, plugin, e)
 {
     switch (e) {
     case RIZZ_PLUGIN_EVENT_STEP:
@@ -111,7 +111,7 @@ rizz_plugin_decl_main(hello, plugin, e)
     return 0;
 }
 
-rizz_plugin_decl_event_handler(hello, e)
+rizz_plugin_decl_event_handler(pg-tf, e)
 {
     switch (e->type) {
     case RIZZ_APP_EVENTTYPE_SUSPENDED:
@@ -131,13 +131,15 @@ rizz_plugin_decl_event_handler(hello, e)
 
 rizz_game_decl_config(conf)
 {
-    conf->app_name = "hello";
+    conf->app_name = "pg-tf";
     conf->app_version = 1000;
-    conf->app_title = "01 - Hello";
+    conf->app_title = "pg-tf";
     conf->window_width = 800;
     conf->window_height = 600;
     conf->core_flags |= RIZZ_CORE_FLAG_VERBOSE;
     conf->multisample_count = 4;
     conf->swap_interval = 2;
-    conf->plugins[0] = "imgui";
+    //conf->plugins[0] = "imgui";
 }
+
+rizz_plugin_implement_info(pg-tf, 1001, "pg-tf plugin", NULL, 0);

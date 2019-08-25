@@ -152,6 +152,10 @@ static void update(float dt) {}
 
 static void render()
 {
+    rizz_profile_begin(the_core, render, 0);
+
+	rizz_profile_begin(the_core, quad, 0);
+
     sg_pass_action pass_action = { .colors[0] = { SG_ACTION_CLEAR, { 0.25f, 0.5f, 0.75f, 1.0f } },
                                    .depth = { SG_ACTION_CLEAR, 1.0f } };
 
@@ -174,13 +178,18 @@ static void render()
 
     the_gfx->staged.end_pass();
     the_gfx->staged.end();
+    rizz_profile_end(the_core);
 
-	// Use imgui UI
+	rizz_profile_begin(the_core, imgui, 0);
+    // Use imgui UI
     the_imgui->SetNextWindowContentSize(sx_vec2f(100.0f, 50.0f));
-    if (the_imgui->Begin("quad", NULL, 0)) {
+    if (the_imgui->Begin("sandbox", NULL, 0)) {
         the_imgui->LabelText("Fps", "%.3f", the_core->fps());
     }
     the_imgui->End();
+    rizz_profile_end(the_core);
+
+	rizz_profile_end(the_core);
 }
 
 rizz_plugin_decl_main(quad, plugin, e)
@@ -218,7 +227,7 @@ rizz_plugin_decl_main(quad, plugin, e)
     return 0;
 }
 
-rizz_plugin_decl_event_handler(quad, e)
+rizz_plugin_decl_event_handler(sandbox, e)
 {
     switch (e->type) {
     case RIZZ_APP_EVENTTYPE_SUSPENDED:
@@ -238,13 +247,15 @@ rizz_plugin_decl_event_handler(quad, e)
 
 rizz_game_decl_config(conf)
 {
-    conf->app_name = "quad";
+    conf->app_name = "sandbox";
     conf->app_version = 1000;
-    conf->app_title = "02 - Quad";
+    conf->app_title = "sandbox";
     conf->window_width = 800;
     conf->window_height = 600;
     conf->core_flags |= RIZZ_CORE_FLAG_VERBOSE;
     conf->multisample_count = 4;
     conf->swap_interval = 2;
     conf->plugins[0] = "imgui";
+    conf->plugins[1] = "pg-ecs";
+    conf->plugins[2] = "pg-tf";
 }

@@ -80,14 +80,14 @@ static void render()
     the_gfx->staged.end_pass();
     the_gfx->staged.end();
 
-    // Use imgui UI
-    if (the_imgui) {
-        the_imgui->SetNextWindowContentSize(sx_vec2f(100.0f, 50.0f));
-        if (the_imgui->Begin("ECS", NULL, 0)) {
-            the_imgui->LabelText("Fps", "%.3f", the_core->fps());
-        }
-        the_imgui->End();
-    }
+    //// Use imgui UI
+    //if (the_imgui) {
+    //    the_imgui->SetNextWindowContentSize(sx_vec2f(100.0f, 50.0f));
+    //    if (the_imgui->Begin("ECS", NULL, 0)) {
+    //        the_imgui->LabelText("Fps", "%.3f", the_core->fps());
+    //    }
+    //    the_imgui->End();
+    //}
 }
 
 rizz_plugin_decl_main(hello, plugin, e)
@@ -142,18 +142,19 @@ rizz_plugin_decl_event_handler(hello, e)
 
 rizz_game_decl_config(conf)
 {
-    conf->app_name = "11-ecs";
+    conf->app_name = "pg-ecs";
     conf->app_version = 1000;
-    conf->app_title = "title: 11-ecs";
+    conf->app_title = "title: pg-ecs";
     conf->window_width = 800;
     conf->window_height = 600;
     conf->core_flags |= RIZZ_CORE_FLAG_VERBOSE;
     conf->multisample_count = 4;
     conf->swap_interval = 2;
-    conf->plugins[0] = "imgui";
+    //conf->plugins[0] = "imgui";
 
 	conf->job_num_threads = 4;
     conf->job_max_fibers = 100;
     conf->tmp_mem_max = 0x500000; // 5MB
 }
 
+rizz_plugin_implement_info(pg-ecs, 1001, "pg-ecs plugin", NULL, 0);

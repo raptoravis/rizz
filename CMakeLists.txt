@@ -224,4 +224,4 @@ if (BUNDLE)
     endif()
 endif()
 
-add_subdirectory("other_examples")
+add_subdirectory("playground")

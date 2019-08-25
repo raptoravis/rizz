@@ -23,7 +23,7 @@ function(rizz__add_example_others proj_name)
     endif()
 
     if (NOT ANDROID AND NOT IOS)
-        target_compile_definitions(${proj_name} PRIVATE COMPILE_DEFINITIONS -DEXAMPLES_ROOT="${CMAKE_CURRENT_SOURCE_DIR}/other_examples")
+        target_compile_definitions(${proj_name} PRIVATE COMPILE_DEFINITIONS -DEXAMPLES_ROOT="${CMAKE_CURRENT_SOURCE_DIR}")
     endif()
     
     target_link_libraries(${proj_name} PRIVATE sx)
@@ -37,12 +37,12 @@ function(rizz__add_example_others proj_name)
 
 endfunction()
 
-set(others_example_projects 11-ecs 12-tf)
+set(others_example_projects sandbox pg-ecs pg-tf)
 
 if (BUILD_EXAMPLES AND NOT BUNDLE)
 	foreach (other_example_project ${others_example_projects})
 		rizz__add_example_others(${other_example_project})
-		set_target_properties(${other_example_project} PROPERTIES FOLDER other_examples)
+		set_target_properties(${other_example_project} PROPERTIES FOLDER playground)
 		target_include_directories(${other_example_project} PRIVATE "../others/entt/src" "../others/taskflow/include")
 	endforeach()
 endif()

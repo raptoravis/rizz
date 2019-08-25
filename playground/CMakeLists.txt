@@ -37,12 +37,13 @@ function(rizz__add_example_others proj_name)
 
 endfunction()
 
-set(others_example_projects sandbox pg-ecs pg-tf)
+set(others_example_projects sandbox pg-ecs pg-tf pg-ecsminigame)
 
 if (BUILD_EXAMPLES AND NOT BUNDLE)
 	foreach (other_example_project ${others_example_projects})
 		rizz__add_example_others(${other_example_project})
 		set_target_properties(${other_example_project} PROPERTIES FOLDER playground)
-		target_include_directories(${other_example_project} PRIVATE "../others/entt/src" "../others/taskflow/include")
+		target_include_directories(${other_example_project} PRIVATE "../others/entt/src" "../others/taskflow/include" "../3rdparty")
 	endforeach()
 endif()
+

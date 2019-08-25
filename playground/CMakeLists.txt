@@ -14,7 +14,7 @@ endif()
 function(rizz__add_example_others proj_name)
 	#set(CMAKE_CXX_STANDARD 17)
     string(SUBSTRING ${proj_name} 3 -1 source_file)
-	file(GLOB SRC_FILES ${proj_name}/*.c*)
+	file(GLOB SRC_FILES ${proj_name}/*.*)
 
     if (BUNDLE AND NOT ANDROID) 
         add_executable(${proj_name} ${EXEC_TYPE} ${SRC_FILES})

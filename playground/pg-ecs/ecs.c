@@ -35,6 +35,9 @@ RIZZ_STATE rizz_gfx_stage g_stage;
     }
 #endif
 */
+
+bool ecs_enabled = true;
+
 int ecsstuff();
 
 static void job_test_cb(int start, int end, int thrd_index, void* user) {
@@ -80,14 +83,15 @@ static void render()
     the_gfx->staged.end_pass();
     the_gfx->staged.end();
 
-    //// Use imgui UI
-    //if (the_imgui) {
-    //    the_imgui->SetNextWindowContentSize(sx_vec2f(100.0f, 50.0f));
-    //    if (the_imgui->Begin("ECS", NULL, 0)) {
-    //        the_imgui->LabelText("Fps", "%.3f", the_core->fps());
-    //    }
-    //    the_imgui->End();
-    //}
+    // Use imgui UI
+    if (the_imgui) {
+        //the_imgui->SetNextWindowContentSize(sx_vec2f(200.0f, 50.0f));
+        if (the_imgui->Begin("sandbox", NULL, 0)) {
+            //the_imgui->LabelText("Fps", "%.3f", the_core->fps());
+            the_imgui->Checkbox("Toggle ECS", &ecs_enabled);
+        }
+        the_imgui->End();
+    }
 }
 
 rizz_plugin_decl_main(hello, plugin, e)
@@ -150,7 +154,7 @@ rizz_game_decl_config(conf)
     conf->core_flags |= RIZZ_CORE_FLAG_VERBOSE;
     conf->multisample_count = 4;
     conf->swap_interval = 2;
-    //conf->plugins[0] = "imgui";
+    conf->plugins[0] = "imgui";
 
 	conf->job_num_threads = 4;
     conf->job_max_fibers = 100;

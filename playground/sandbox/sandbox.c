@@ -243,8 +243,8 @@ static void render()
 
     // UI
     static bool show_debugger = false;
-    the_imgui->SetNextWindowContentSize(sx_vec2f(140.0f, 120.0f));
-    if (the_imgui->Begin("animsprite", NULL, 0)) {
+    the_imgui->SetNextWindowContentSize(sx_vec2f(140.0f, 200.0f));
+    if (the_imgui->Begin("sandbox", NULL, 0)) {
         the_imgui->LabelText("Fps", "%.3f", the_core->fps());
         the_imgui->Checkbox("Show Debugger", &show_debugger);
     }
@@ -254,7 +254,7 @@ static void render()
         the_sprite->show_debugger(&show_debugger);
 }
 
-rizz_plugin_decl_main(animsprite, plugin, e)
+rizz_plugin_decl_main(sandbox, plugin, e)
 {
     switch (e) {
     case RIZZ_PLUGIN_EVENT_STEP:
@@ -294,7 +294,7 @@ rizz_plugin_decl_main(animsprite, plugin, e)
     return 0;
 }
 
-rizz_plugin_decl_event_handler(animsprite, e)
+rizz_plugin_decl_event_handler(sandbox, e)
 {
     switch (e->type) {
     case RIZZ_APP_EVENTTYPE_UPDATE_APIS:
@@ -309,9 +309,9 @@ rizz_plugin_decl_event_handler(animsprite, e)
 
 rizz_game_decl_config(conf)
 {
-    conf->app_name = "animsprite";
+    conf->app_name = "sandbox";
     conf->app_version = 1000;
-    conf->app_title = "03 - AnimSprite";
+    conf->app_title = "sandbox";
     conf->window_width = 800;
     conf->window_height = 600;
     conf->core_flags |= RIZZ_CORE_FLAG_VERBOSE;
@@ -319,4 +319,6 @@ rizz_game_decl_config(conf)
     conf->swap_interval = 2;
     conf->plugins[0] = "imgui";
     conf->plugins[1] = "sprite";
+    conf->plugins[2] = "pg-ecs";
+    conf->plugins[3] = "pg-tf";
 }

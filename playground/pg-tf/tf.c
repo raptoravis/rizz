@@ -36,6 +36,8 @@ RIZZ_STATE rizz_gfx_stage g_stage;
 #endif
 */
 
+bool tf_enabled = true;
+
 int simple_example();
 int observer_example();
 int parallel_for_example();
@@ -69,14 +71,15 @@ static void render()
     the_gfx->staged.end_pass();
     the_gfx->staged.end();
 
-    //// Use imgui UI
-    //if (the_imgui) {
-    //    the_imgui->SetNextWindowContentSize(sx_vec2f(100.0f, 50.0f));
-    //    if (the_imgui->Begin("tf", NULL, 0)) {
-    //        the_imgui->LabelText("Fps", "%.3f", the_core->fps());
-    //    }
-    //    the_imgui->End();
-    //}
+    // Use imgui UI
+    if (the_imgui) {
+        //the_imgui->SetNextWindowContentSize(sx_vec2f(100.0f, 50.0f));
+        if (the_imgui->Begin("sandbox", NULL, 0)) {
+            //the_imgui->LabelText("Fps", "%.3f", the_core->fps());
+            the_imgui->Checkbox("Toggle TF", &tf_enabled);
+        }
+        the_imgui->End();
+    }
 }
 
 rizz_plugin_decl_main(pg-tf, plugin, e)
@@ -139,7 +142,7 @@ rizz_game_decl_config(conf)
     conf->core_flags |= RIZZ_CORE_FLAG_VERBOSE;
     conf->multisample_count = 4;
     conf->swap_interval = 2;
-    //conf->plugins[0] = "imgui";
+    conf->plugins[0] = "imgui";
 }
 
 rizz_plugin_implement_info(pg-tf, 1001, "pg-tf plugin", NULL, 0);

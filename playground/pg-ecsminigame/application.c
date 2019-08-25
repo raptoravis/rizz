@@ -151,11 +151,7 @@ void frame(float dt) {
 
     double time = sx_tm_sec(the_core->elapsed_tick());
     //float dt = (float)sx_tm_sec(the_core->delta_tick());
-
-	rizz_profile_begin(the_core, updateMovement, 0);
-    int sprite_count = game_update(sprite_data, time, dt);
-    rizz_profile_end(the_core);
-
+    int sprite_count = game_update(the_core, sprite_data, time, dt);
 
     sg_pass_action pass_action = {
         .colors[0] = { .action = SG_ACTION_CLEAR, .val = { 0.1f, 0.1f, 0.1f, 1.0f } }

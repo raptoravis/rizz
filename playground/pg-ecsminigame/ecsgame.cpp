@@ -7,6 +7,8 @@
 
 #include "./game.h"
 
+#include "rizz/core.h"
+
 const int kObjectCount = 10000;
 const int kAvoidCount = 20;
 
@@ -294,13 +296,23 @@ int updateRender(entt::registry& registry, sprite_data_t* data)
 }
 
 
-extern "C" int game_update(sprite_data_t* data, double time, float deltaTime)
+extern "C" int game_update(rizz_api_core* _core, sprite_data_t* data, double time, float deltaTime)
 {
-    // update object systems
-    updateMovement(registry, time, deltaTime);
-    updateAvoidance(registry, time, deltaTime);
+    rizz_profile_begin(_core, game_update, 0);
 
-	int objectCount = updateRender(registry, data);
+		rizz_profile_begin(_core, updateMovement, 0);
+		updateMovement(registry, time, deltaTime);
+		rizz_profile_end(_core);
+
+		rizz_profile_begin(_core, updateAvoidance, 0);
+		updateAvoidance(registry, time, deltaTime);
+		rizz_profile_end(_core);
+
+		rizz_profile_begin(_core, updateRender, 0);
+		int objectCount = updateRender(registry, data);
+		rizz_profile_end(_core);
+
+	rizz_profile_end(_core);
 
     return objectCount;
 }

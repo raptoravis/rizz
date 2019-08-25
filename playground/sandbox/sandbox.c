@@ -82,7 +82,7 @@ static bool init()
     };
 
 
-    uint16_t indices[] = { 0, 2, 1, 3, 0, 2 };
+    uint16_t indices[] = { 0, 1, 2, 0, 2, 3 };
 
     // buffers
     g_quad.vbuff = the_gfx->imm.make_buffer(&(sg_buffer_desc){ .usage = SG_USAGE_IMMUTABLE,

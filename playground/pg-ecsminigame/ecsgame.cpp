@@ -177,7 +177,7 @@ extern "C" void game_initialize(void)
 
         // make it move
         float velx, vely;
-        MoveComponent::Initialize(0.5f, 0.7f, velx, vely);
+        MoveComponent::Initialize(0.5f * 2, 0.7f * 2, velx, vely);
         registry.assign<MoveComponent>(entity, velx, vely);
 
 		s_AvoidanceSystem.AddObjectToSystem(entity);
@@ -204,12 +204,12 @@ extern "C" void game_initialize(void)
 
         // make it move
         float velx, vely;
-        MoveComponent::Initialize(0.1f, 0.2f, velx, vely);
+        MoveComponent::Initialize(0.5f, 0.7f, velx, vely);
         registry.assign<MoveComponent>(entity, velx, vely);
 
         // add to avoidance this as "Avoid This" object
         s_AvoidanceSystem.AddAvoidThisObjectToSystem(entity, 1.3f);
-        s_AvoidanceSystem.AddObjectToSystem(entity);
+        //s_AvoidanceSystem.AddObjectToSystem(entity);
     }
 }
 

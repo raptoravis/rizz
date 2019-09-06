@@ -45,8 +45,7 @@ endfunction()
 
 function(rizz__add_example proj_name)
     string(SUBSTRING ${proj_name} 3 -1 source_file)
-	#file(GLOB SRC_FILES examples/${proj_name}/${source_file}.c)
-	file(GLOB SRC_FILES examples/${proj_name}/${source_file}.*)
+	file(GLOB SRC_FILES examples/${proj_name}/${source_file}.c)
     if (BUNDLE AND NOT ANDROID) 
         add_executable(${proj_name} ${EXEC_TYPE} ${SRC_FILES})
     else()
@@ -60,6 +59,25 @@ function(rizz__add_example proj_name)
         target_compile_definitions(${proj_name} PRIVATE COMPILE_DEFINITIONS -DEXAMPLES_ROOT="${EXAMPLES_ROOT}")
     endif()
     
+    target_link_libraries(${proj_name} PRIVATE sx)
+    add_dependencies(${proj_name} rizz)
+
+    # compile default shaders
+    if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/examples/${proj_name}/${source_file}.vert AND 
+        EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/examples/${proj_name}/${source_file}.frag)
+        set(shaders examples/${proj_name}/${source_file}.vert 
+                    examples/${proj_name}/${source_file}.frag)
+        set_source_files_properties(${shaders} PROPERTIES GLSLCC_OUTPUT_DIRECTORY "examples/assets/shaders")
+        glslcc_target_compile_shaders_sgs(${proj_name} "${shaders}")
+    endif()
+endfunction()
+
+function(rizz_add_executable proj_name source_files)
+    if (BUNDLE AND NOT ANDROID) 
+        add_executable(${proj_name} ${EXEC_TYPE} ${source_files})
+    else()
+        add_library(${proj_name} SHARED ${source_files})
+    endif()
     target_link_libraries(${proj_name} PRIVATE sx)
     add_dependencies(${proj_name} rizz)
 endfunction()
@@ -102,26 +120,14 @@ get_directory_property(has_parent PARENT_DIRECTORY)
 # PLUGIN_TYPE, EXEC_TYPE definitions
 # PLUGIN_TYPE: cmake plugin builds should include PLUGIN_TYPE: add_library(plugin ${PLUGIN_TYPE} ...)
 # EXEC_TYPE: cmake executable builds should include EXEC_TYPE: add_executable(binary ${EXEC_TYPE} ...)
-if (has_parent)
-    if (BUNDLE)
-        set(PLUGIN_TYPE STATIC PARENT_SCOPE)
-    else()
-        set(PLUGIN_TYPE SHARED PARENT_SCOPE)
-    endif()
-
-    if (WIN32)
-        set(EXEC_TYPE WIN32 PARENT_SCOPE)
-    endif()
+if (BUNDLE)
+	set(PLUGIN_TYPE STATIC)
 else()
-    if (BUNDLE)
-        set(PLUGIN_TYPE STATIC)
-    else()
-        set(PLUGIN_TYPE SHARED)
-    endif()
+	set(PLUGIN_TYPE SHARED)
+endif()
 
-    if (WIN32)
-        set(EXEC_TYPE WIN32)
-    endif()
+if (WIN32)
+	set(EXEC_TYPE WIN32)
 endif()
 
 # include directory is for all projects
@@ -164,7 +170,7 @@ set(example_projects 01-hello
                      03-drawsprite 
                      04-animsprite
                      05-playsound
-					 )
+					 06-sdf)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 

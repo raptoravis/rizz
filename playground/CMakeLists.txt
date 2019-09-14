@@ -49,7 +49,7 @@ function(rizz__add_example_others proj_name)
     endif()
 endfunction()
 
-set(others_example_projects sandbox pg-ecs pg-tf pg-ecsminigame)
+set(others_example_projects sandbox pg-ecs pg-tf pg-ecsminigame pg-cs)
 
 if (BUILD_EXAMPLES AND NOT BUNDLE)
 	foreach (other_example_project ${others_example_projects})
@@ -58,4 +58,3 @@ if (BUILD_EXAMPLES AND NOT BUNDLE)
 		target_include_directories(${other_example_project} PRIVATE "../others/entt/src" "../others/taskflow/include" "../3rdparty")
 	endforeach()
 endif()
-

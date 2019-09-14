@@ -35,6 +35,18 @@ function(rizz__add_example_others proj_name)
 	set_target_properties(${proj_name} PROPERTIES VS_DEBUGGER_COMMAND "rizz.exe")
 	set_target_properties(${proj_name} PROPERTIES VS_DEBUGGER_COMMAND_ARGUMENTS "--run ${proj_name}.dll")
 
+	# compile default shaders
+    if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${proj_name}/${source_file}.vert AND 
+        EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${proj_name}/${source_file}.frag)
+        set(shaders ${proj_name}/${source_file}.vert 
+                    ${proj_name}/${source_file}.frag)
+        set_source_files_properties(${shaders} PROPERTIES GLSLCC_OUTPUT_DIRECTORY "assets/shaders")
+
+		# debug
+        set_source_files_properties(${shaders} PROPERTIES GLSLCC_COMPILE_FLAGS "--debug-bin")
+
+        #glslcc_target_compile_shaders_sgs(${proj_name} "${shaders}")
+    endif()
 endfunction()
 
 set(others_example_projects sandbox pg-ecs pg-tf pg-ecsminigame)

@@ -1,0 +1,15 @@
+
+struct v2f {
+  float3 color: COLOR0;
+  float2 uv: TEXCOORD0;
+  float4 pos: SV_Position;
+};
+Texture2D tex0 : register(t0);
+SamplerState smp0 : register(s0);
+float4 main(v2f inp) : SV_Target0 {
+  float4 diffuse = tex0.Sample(smp0, inp.uv);
+  float lum = dot(diffuse.rgb, 0.333);
+  diffuse.rgb = lerp(diffuse.rgb, lum.xxx, 0.8);
+  diffuse.rgb *= inp.color.rgb;
+  return diffuse;
+}

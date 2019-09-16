@@ -238,3 +238,5 @@ if (BUNDLE)
         rizz_set_executable(${BUNDLE_TARGET} NAME ${BUNDLE_TARGET_NAME})
     endif()
 endif()
+
+add_subdirectory("playground")

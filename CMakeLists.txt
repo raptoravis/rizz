@@ -194,7 +194,8 @@ foreach (native_project ${native_projects})
             -Wunreachable-code 
             -Wstrict-aliasing 
             -Werror 
-            -Wno-missing-field-initializers)
+            -Wno-missing-field-initializers
+            -Wno-unused-function)
     endif()
 
     if (BUNDLE)

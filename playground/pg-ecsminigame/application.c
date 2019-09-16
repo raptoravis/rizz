@@ -78,16 +78,16 @@ void init(void) {
     };
 
 	 // buffers
-    g_quad.vbuff = the_gfx->imm.make_buffer(&(sg_buffer_desc){ .usage = SG_USAGE_STREAM,
+    g_quad.vbuff = the_gfx->make_buffer(&(sg_buffer_desc){ .usage = SG_USAGE_STREAM,
                                                                .type = SG_BUFFERTYPE_VERTEXBUFFER,
 															   .size = sizeof(sprite_data_t) * kMaxSpriteCount});
 
-    g_quad.ibuff = the_gfx->imm.make_buffer(&(sg_buffer_desc){ .usage = SG_USAGE_IMMUTABLE,
+    g_quad.ibuff = the_gfx->make_buffer(&(sg_buffer_desc){ .usage = SG_USAGE_IMMUTABLE,
                                                                .type = SG_BUFFERTYPE_INDEXBUFFER,
                                                                .size = sizeof(indices),
                                                                .content = indices });
     /* create shader */
-    sg_shader shd = the_gfx->imm.make_shader(&(sg_shader_desc){
+    sg_shader shd = the_gfx->make_shader(&(sg_shader_desc){
         .attrs = { 
 			[0] = { .name = "posScale", .sem_name = "POSSCALE", .sem_index =  0},
             [1] = { .name ="colorIndex", .sem_name = "COLORSPRITE", .sem_index = 0}
@@ -104,7 +104,7 @@ void init(void) {
                                  &(rizz_texture_load_params){ 0 }, 0, NULL, 0);
 
     /* create pipeline object */
-    g_quad.pip = the_gfx->imm.make_pipeline(&(sg_pipeline_desc){
+    g_quad.pip = the_gfx->make_pipeline(&(sg_pipeline_desc){
         .layout = {
                 .buffers[0] = { .stride = sizeof(sprite_data_t),
                                 .step_func = SG_VERTEXSTEP_PER_INSTANCE },
@@ -180,15 +180,15 @@ void shutdown(void) {
     game_destroy();
 
     if (g_quad.vbuff.id)
-        the_gfx->imm.destroy_buffer(g_quad.vbuff);
+        the_gfx->destroy_buffer(g_quad.vbuff);
     if (g_quad.ibuff.id)
-        the_gfx->imm.destroy_buffer(g_quad.ibuff);
+        the_gfx->destroy_buffer(g_quad.ibuff);
     if (g_quad.img.id)
         the_asset->unload(g_quad.img);
     if (g_quad.shader.id)
         the_asset->unload(g_quad.shader);
     if (g_quad.pip.id)
-        the_gfx->imm.destroy_pipeline(g_quad.pip);
+        the_gfx->destroy_pipeline(g_quad.pip);
 
 	if (sprite_data) {
         const sx_alloc* tmp_alloc = sx_alloc_malloc();

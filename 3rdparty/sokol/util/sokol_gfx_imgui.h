@@ -551,10 +551,10 @@ typedef struct {
     sg_imgui_caps_t caps;
     sg_pipeline cur_pipeline;
     sg_trace_hooks hooks;
-    rizz_api_gfx_immediate* api;
+    rizz_api_gfx* api;
 } sg_imgui_t;
 
-SOKOL_API_DECL void sg_imgui_init(sg_imgui_t* ctx, rizz_api_gfx_immediate* api);
+SOKOL_API_DECL void sg_imgui_init(sg_imgui_t* ctx, rizz_api_gfx* api);
 SOKOL_API_DECL void sg_imgui_discard(sg_imgui_t* ctx);
 SOKOL_API_DECL void sg_imgui_draw(sg_imgui_t* ctx);
 
@@ -611,10 +611,10 @@ SOKOL_API_DECL void sg_imgui_draw_capabilities_window(sg_imgui_t* ctx);
 
 #define _SG_IMGUI_SLOT_MASK (0xFFFF)
 #define _SG_IMGUI_LIST_WIDTH (192)
-#define _SG_IMGUI_COLOR_OTHER the__imgui.ColorConvertFloat4ToU32((ImVec4) {0.75f, 0.75f, 0.75f, 1.0f})
-#define _SG_IMGUI_COLOR_RSRC the__imgui.ColorConvertFloat4ToU32((ImVec4){1.0f, 1.0f, 0.0f, 1.0f})
-#define _SG_IMGUI_COLOR_DRAW the__imgui.ColorConvertFloat4ToU32((ImVec4){0.0f, 1.0f, 0.0f, 1.0f})
-#define _SG_IMGUI_COLOR_ERR the__imgui.ColorConvertFloat4ToU32((ImVec4){1.0f, 0.5f, 0.5f, 1.0f})
+#define _SG_IMGUI_COLOR_OTHER the__imgui.ColorConvertFloat4ToU32((ImVec4) {{0.75f, 0.75f, 0.75f, 1.0f}})
+#define _SG_IMGUI_COLOR_RSRC the__imgui.ColorConvertFloat4ToU32((ImVec4){{1.0f, 1.0f, 0.0f, 1.0f}})
+#define _SG_IMGUI_COLOR_DRAW the__imgui.ColorConvertFloat4ToU32((ImVec4){{0.0f, 1.0f, 0.0f, 1.0f}})
+#define _SG_IMGUI_COLOR_ERR the__imgui.ColorConvertFloat4ToU32((ImVec4){{1.0f, 0.5f, 0.5f, 1.0f}})
 
 /*--- UTILS ------------------------------------------------------------------*/
 _SOKOL_PRIVATE int _sg_imgui_slot_index(uint32_t id) {
@@ -3246,7 +3246,7 @@ _SOKOL_PRIVATE void _sg_imgui_draw_caps_panel(sg_imgui_t* ctx) {
 }
 
 /*--- PUBLIC FUNCTIONS -------------------------------------------------------*/
-SOKOL_API_IMPL void sg_imgui_init(sg_imgui_t* ctx, rizz_api_gfx_immediate* api) {
+SOKOL_API_IMPL void sg_imgui_init(sg_imgui_t* ctx, rizz_api_gfx* api) {
     SOKOL_ASSERT(ctx);
     SOKOL_ASSERT(api);
 

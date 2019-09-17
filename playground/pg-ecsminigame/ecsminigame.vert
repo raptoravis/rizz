@@ -19,8 +19,10 @@ layout(location = 1) out vec2 out_var_TEXCOORD0;
 
 void main()
 {
-    float x = float(uint(gl_VertexID) / 2u);
-    float y = float(uint(gl_VertexID) & 1u);
+    //float x = float(uint(gl_VertexID) / 2u);
+    //oat y = float(uint(gl_VertexID) & 1u);
+    float x = float(uint(gl_VertexIndex) / 2u);
+    float y = float(uint(gl_VertexIndex) & 1u);
 
 	vec4 pos;
 

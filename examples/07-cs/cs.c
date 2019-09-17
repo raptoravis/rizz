@@ -143,7 +143,7 @@ static bool init()
 
     char csshader_dir[RIZZ_MAX_PATH];
     sx_os_path_join(csshader_dir, sizeof(csshader_dir), EXAMPLES_ROOT,
-                    "pg-cs/cs.hlslcs");    // "/examples/assets"
+                    "07-cs/cs.hlslcs");    // "/examples/assets"
 
 	sx_mem_block* csshader_memblock = the_vfs->read(csshader_dir, RIZZ_VFS_FLAG_TEXT_FILE, 0);
     const char* cs_src = (const char*)csshader_memblock->data;

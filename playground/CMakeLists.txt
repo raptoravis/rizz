@@ -10,7 +10,6 @@ if(NOT CMAKE_CXX_STANDARD)
 	set(CMAKE_CXX_STANDARD 17)
 endif()
 
-
 function(rizz__add_example_others proj_name)
 	#set(CMAKE_CXX_STANDARD 17)
     string(SUBSTRING ${proj_name} 3 -1 source_file)
@@ -40,16 +39,35 @@ function(rizz__add_example_others proj_name)
         EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${proj_name}/${source_file}.frag)
         set(shaders ${proj_name}/${source_file}.vert 
                     ${proj_name}/${source_file}.frag)
+
+		#message("==${shaders}")
+
         set_source_files_properties(${shaders} PROPERTIES GLSLCC_OUTPUT_DIRECTORY "assets/shaders")
 
 		# debug
         set_source_files_properties(${shaders} PROPERTIES GLSLCC_COMPILE_FLAGS "--debug-bin")
 
-        #glslcc_target_compile_shaders_sgs(${proj_name} "${shaders}")
+        glslcc_target_compile_shaders_sgs(${proj_name} "${shaders}")
+    endif()
+
+    if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${proj_name}/${source_file}.comp)
+        set(shaders ${proj_name}/${source_file}.comp)
+
+        set_source_files_properties(${shaders} PROPERTIES GLSLCC_OUTPUT_DIRECTORY "assets/shaders")
+
+		# debug
+        set_source_files_properties(${shaders} PROPERTIES GLSLCC_COMPILE_FLAGS "--debug-bin")
+
+		set(output_compute "${proj_name}-compute")
+		message("==${output_compute}")
+		message("==${shaders}")
+
+        glslcc_target_compile_shaders_sgs("${proj_name}" "${shaders}")
     endif()
 endfunction()
 
 set(others_example_projects sandbox pg-ecs pg-tf pg-ecsminigame pg-cs)
+#set(others_example_projects pg-cs)
 
 if (BUILD_EXAMPLES AND NOT BUNDLE)
 	foreach (other_example_project ${others_example_projects})

@@ -40,6 +40,8 @@ function(rizz__add_example_others proj_name)
         set(shaders ${proj_name}/${source_file}.vert 
                     ${proj_name}/${source_file}.frag)
 
+		#SOURCE_GROUP(shader_files FILES ${shaders})
+
         set_source_files_properties(${shaders} PROPERTIES GLSLCC_OUTPUT_DIRECTORY "assets/shaders")
 
 		if (CMAKE_BUILD_TYPE AND CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -49,21 +51,29 @@ function(rizz__add_example_others proj_name)
         glslcc_target_compile_shaders_sgs(${proj_name} "${shaders}")
     endif()
 
-    if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${proj_name}/${source_file}.comp)
-        set(shaders ${proj_name}/${source_file}.comp)
+	file(GLOB COMP_FILES ${CMAKE_CURRENT_SOURCE_DIR}/${proj_name}/*.comp)
 
-        set_source_files_properties(${shaders} PROPERTIES GLSLCC_OUTPUT_DIRECTORY "assets/shaders")
+	#SOURCE_GROUP(shader_files FILES ${COMP_FILES})
+
+	foreach(comp_file ${COMP_FILES})
+		set(shaders ${comp_file})
+
+		set_source_files_properties(${shaders} PROPERTIES GLSLCC_OUTPUT_DIRECTORY "assets/shaders")
 
 		if (CMAKE_BUILD_TYPE AND CMAKE_BUILD_TYPE STREQUAL "Debug")
 			set_source_files_properties(${shaders} PROPERTIES GLSLCC_COMPILE_FLAGS "--debug-bin")
 		endif()
 
-		set(output_compute "${proj_name}-compute")
-        glslcc_target_compile_shaders_sgs("${proj_name}" "${shaders}")
-    endif()
+		#get_filename_component(comp_file_base_name ${comp_file} NAME_WE)
+		#message("--- ${comp_file_base_name} ${shaders}")
+		#glslcc_target_compile_shaders_sgs("${comp_file_base_name}" "${shaders}")
+
+		glslcc_target_compile_shaders_sgs("${proj_name}" "${shaders}")
+	
+	endforeach()
 endfunction()
 
-set(others_example_projects sandbox pg-ecs pg-tf pg-ecsminigame pg-cs)
+set(others_example_projects sandbox pg-ecs pg-tf pg-ecsminigame pg-cs pg-gdr)
 #set(others_example_projects pg-cs)
 
 if (BUILD_EXAMPLES AND NOT BUNDLE)

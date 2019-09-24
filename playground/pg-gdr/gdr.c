@@ -290,9 +290,9 @@ rizz_plugin_decl_event_handler(quad, e)
 
 rizz_game_decl_config(conf)
 {
-    conf->app_name = "cs";
+    conf->app_name = "gdr";
     conf->app_version = 1000;
-    conf->app_title = "pg-cs";
+    conf->app_title = "pg-gdr";
     conf->window_width = 800;
     conf->window_height = 600;
     conf->core_flags |= RIZZ_CORE_FLAG_VERBOSE;

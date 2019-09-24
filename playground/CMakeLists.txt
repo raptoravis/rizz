@@ -34,13 +34,14 @@ function(rizz__add_example_others proj_name)
 	set_target_properties(${proj_name} PROPERTIES VS_DEBUGGER_COMMAND "rizz.exe")
 	set_target_properties(${proj_name} PROPERTIES VS_DEBUGGER_COMMAND_ARGUMENTS "--run ${proj_name}.dll")
 
+	SOURCE_GROUP("Shader outfiles" REGULAR_EXPRESSION ".*\.sgs$")
+	SOURCE_GROUP("Shader srcfiles" REGULAR_EXPRESSION ".*\.(vert|frag|comp)$")
+
 	# compile default shaders
     if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${proj_name}/${source_file}.vert AND 
         EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${proj_name}/${source_file}.frag)
         set(shaders ${proj_name}/${source_file}.vert 
                     ${proj_name}/${source_file}.frag)
-
-		#SOURCE_GROUP(shader_files FILES ${shaders})
 
         set_source_files_properties(${shaders} PROPERTIES GLSLCC_OUTPUT_DIRECTORY "assets/shaders")
 
@@ -52,8 +53,6 @@ function(rizz__add_example_others proj_name)
     endif()
 
 	file(GLOB COMP_FILES ${CMAKE_CURRENT_SOURCE_DIR}/${proj_name}/*.comp)
-
-	#SOURCE_GROUP(shader_files FILES ${COMP_FILES})
 
 	foreach(comp_file ${COMP_FILES})
 		set(shaders ${comp_file})

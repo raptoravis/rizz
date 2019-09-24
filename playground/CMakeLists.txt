@@ -40,12 +40,11 @@ function(rizz__add_example_others proj_name)
         set(shaders ${proj_name}/${source_file}.vert 
                     ${proj_name}/${source_file}.frag)
 
-		#message("==${shaders}")
-
         set_source_files_properties(${shaders} PROPERTIES GLSLCC_OUTPUT_DIRECTORY "assets/shaders")
 
-		# debug
-        set_source_files_properties(${shaders} PROPERTIES GLSLCC_COMPILE_FLAGS "--debug-bin")
+		if (CMAKE_BUILD_TYPE AND CMAKE_BUILD_TYPE STREQUAL "Debug")
+			set_source_files_properties(${shaders} PROPERTIES GLSLCC_COMPILE_FLAGS "--debug-bin")
+		endif()
 
         glslcc_target_compile_shaders_sgs(${proj_name} "${shaders}")
     endif()
@@ -55,13 +54,11 @@ function(rizz__add_example_others proj_name)
 
         set_source_files_properties(${shaders} PROPERTIES GLSLCC_OUTPUT_DIRECTORY "assets/shaders")
 
-		# debug
-        set_source_files_properties(${shaders} PROPERTIES GLSLCC_COMPILE_FLAGS "--debug-bin")
+		if (CMAKE_BUILD_TYPE AND CMAKE_BUILD_TYPE STREQUAL "Debug")
+			set_source_files_properties(${shaders} PROPERTIES GLSLCC_COMPILE_FLAGS "--debug-bin")
+		endif()
 
 		set(output_compute "${proj_name}-compute")
-		message("==${output_compute}")
-		message("==${shaders}")
-
         glslcc_target_compile_shaders_sgs("${proj_name}" "${shaders}")
     endif()
 endfunction()

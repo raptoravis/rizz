@@ -29,10 +29,14 @@ function(rizz__add_example_others proj_name)
     add_dependencies(${proj_name} rizz)
 
 	#set_target_properties(${proj_name} PROPERTIES CXX_STANDARD 17)
-	#set_target_properties(${proj_name} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../bin/Debug")
-	set_target_properties(${proj_name} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "$(OutDir)")
-	set_target_properties(${proj_name} PROPERTIES VS_DEBUGGER_COMMAND "rizz.exe")
-	set_target_properties(${proj_name} PROPERTIES VS_DEBUGGER_COMMAND_ARGUMENTS "--run ${proj_name}.dll")
+
+	IF (MSVC)
+		#set_target_properties(${proj_name} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../bin/Debug")
+		#set_target_properties(${proj_name} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "$(OutDir)")
+		set_target_properties(${proj_name} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:${proj_name}>/")
+		set_target_properties(${proj_name} PROPERTIES VS_DEBUGGER_COMMAND "rizz.exe")
+		set_target_properties(${proj_name} PROPERTIES VS_DEBUGGER_COMMAND_ARGUMENTS "--run ${proj_name}.dll")
+	ENDIF()
 
 	SOURCE_GROUP("Shader outfiles" REGULAR_EXPRESSION ".*\.sgs$")
 	SOURCE_GROUP("Shader srcfiles" REGULAR_EXPRESSION ".*\.(vert|frag|comp)$")

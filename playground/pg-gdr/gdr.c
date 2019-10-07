@@ -202,7 +202,7 @@ static void render()
     // dispatch CS to generate the texture
     {
         g_quad.csbindings.cs_images[0] = ((rizz_texture*)the_asset->obj(g_quad.img).ptr)->img;
-        g_quad.csbindings.cs_images[1] = g_quad.csout;
+        g_quad.csbindings.cs_image_uavs[0] = g_quad.csout;
         the_gfx->staged.apply_pipeline(g_quad.cspip);
         the_gfx->staged.apply_bindings(&g_quad.csbindings);
         the_gfx->staged.dispatch(512 / 16, 512 / 16, 1);

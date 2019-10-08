@@ -1,0 +1,1 @@
+./build-cmake.bat vs2017 open

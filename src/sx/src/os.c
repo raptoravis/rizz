@@ -371,7 +371,7 @@ sx_file_info sx_os_stat(const char* filepath)
     sx_assert(filepath);
     sx_file_info info = { SX_FILE_TYPE_INVALID, 0, 0 };
 
-#if SX_COMPILER_MSVC
+#if SX_PLATFORM_WINDOWS
     WIN32_FILE_ATTRIBUTE_DATA fad;
     if (!GetFileAttributesExA(filepath, GetFileExInfoStandard, &fad)) {
         return info;
@@ -659,7 +659,6 @@ int sx_os_numcores()
     if (sysctlbyname("hw.logicalcpu", &ncpu, &ncpu_len, NULL, 0) == 0)
         return ncpu;
     return 1;
-
 #elif SX_PLATFORM_BSD
     int ctlarg[2], ncpu;
     size_t len;
